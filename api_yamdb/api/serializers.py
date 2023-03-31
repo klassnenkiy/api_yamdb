@@ -26,7 +26,7 @@ class TitlesSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "rating")
 
     def validate(self, data):
-        if self.context["request"].year > datetime.date.now().year:
+        if data["year"] > datetime.date.today().year:
             raise serializers.ValidationError(
                 "Нельзя добавлять произведения, которые еще не вышли"
             )

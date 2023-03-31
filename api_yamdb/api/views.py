@@ -3,13 +3,13 @@ from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 from reviews.models import Categories, Genres, Titles
 
-from django.shortcuts import get_object_or_404
 
 from .serializers import (
     CategoriesSerializer,
     GenresSerializer,
     TitlesSerializer,
 )
+from .filters import TitlesFilter
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
@@ -17,42 +17,27 @@ class TitlesViewSet(viewsets.ModelViewSet):
     serializer_class = TitlesSerializer
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ("category__slug", "genre__slug", "name", "year")
+    filter_class = TitlesFilter
+    #filterset_fields = ("category__slug", "genre__slug", "name", "year")
 
 
-class CreateListViewSet(
-    mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+class CreateListDeleteViewSet(
+    mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
 ):
     pass
 
 
-class DeleteViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
-    pass
-
-
-class CategoriesViewSet(CreateListViewSet):
+class CategoriesViewSet(CreateListDeleteViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
+    lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
 
 
-class CategoryDeleteViewSet(DeleteViewSet):
-    serializer_class = CategoriesSerializer
-
-    def get_queryset(self):
-        return get_object_or_404(Categories, slug=self.kwargs.get("slug"))
-
-
-class GenresViewSet(CreateListViewSet):
+class GenresViewSet(CreateListDeleteViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
+    lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
-
-
-class GenreDeleteViewSet(DeleteViewSet):
-    serializer_class = GenresSerializer
-
-    def get_queryset(self):
-        return get_object_or_404(Genres, slug=self.kwargs.get("slug"))
