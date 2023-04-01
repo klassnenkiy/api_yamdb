@@ -23,6 +23,12 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           TitleSerializer, TokenSerializer, UserSerializer)
 
 
+class CreateListDeleteViewSet(
+    mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+):
+    pass
+
+
 @api_view(('POST',))
 def signup(request):
     serializer = SignupSerializer(data=request.data)
@@ -99,11 +105,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filter_class = TitleFilter
     #filterset_fields = ("category__slug", "genre__slug", "name", "year")
-
-class CreateListDeleteViewSet(
-    mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
-):
-    pass
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
