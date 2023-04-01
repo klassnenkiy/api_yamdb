@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -164,72 +165,69 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
+    """Модель, отвечает за отзывы в произведениях."""
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        related_name='reviews',
-        verbose_name='Произведение'
+        verbose_name='Произведение',
     )
-    text = models.CharField(
-        'Текст отзыва',
-        max_length=256,
+    text = models.TextField(
+        verbose_name='Текст отзыва',
+        help_text='Введите текст отзыва'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='reviews',
-        verbose_name='Автор отзыва'
+        verbose_name='Автор',
     )
     score = models.IntegerField(
-        'Оценка',
-        validators=(
-            MinValueValidator(1),
-            MaxValueValidator(10)
-        ),
+        validators=[
+            MinValueValidator(settings.SCORE_ZERO),
+            MaxValueValidator(settings.SCORE_TEN),
+        ],
+        verbose_name='Оценка'
     )
     pub_date = models.DateTimeField(
-        'Дата публикации',
+        verbose_name='Дата добавления',
         auto_now_add=True,
-        db_index=True
+        db_index=True,
     )
 
     class Meta:
-        verbose_name = 'Отзыв'
-        verbose_name_plural = 'Отзывы'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['author', 'title'],
-                name='Автор может поставить только одну оценку')
-        ]
+        """Внутренний класс Meta."""
+        default_related_name = 'reviews'
 
     def __str__(self):
         return self.text
 
 
 class Comment(models.Model):
+    """Модель, отвечает за комментарии к отзывам."""
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name='Отзыв'
+        verbose_name='Текст отзыва'
     )
     text = models.CharField(
-        'Текст комментария',
+        verbose_name='Текст комментария',
         max_length=256,
+        help_text='Введите текст комментария'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='comments',
-        verbose_name='Автор отзыва'
+        verbose_name='Автор'
     )
     pub_date = models.DateTimeField(
-        'Дата публикации',
         auto_now_add=True,
-        db_index=True
+        db_index=True,
+        verbose_name='Дата добавления'
     )
 
     class Meta:
+        """Внутренний класс Meta."""
+        default_related_name = 'comments'
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 

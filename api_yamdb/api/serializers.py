@@ -74,12 +74,28 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Класс сериализатора Comment."""
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username'
+    )
+
     class Meta:
-        model = Comment
+        """Внутренний класс Meta."""
         fields = '__all__'
+        model = Comment
+        read_only_fields = ('title',)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Класс сериализатора Review."""
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username'
+    )
+
     class Meta:
-        model = Review
+        """Внутренний класс Meta."""
         fields = '__all__'
+        model = Review
+        read_only_fields = ('title',)
