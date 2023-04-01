@@ -3,16 +3,19 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title, User
 
+from .filters import TitleFilter
 from .permissions import (IsAdmin, IsAdminOrReadOnly,
                           IsAuthorModeratorAdminOrReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
@@ -89,20 +92,34 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save(role=instance.role, partial=True)
         return Response(serializer.data)
 
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.select_related("category")
+    serializer_class = TitleSerializer
+    pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = TitleFilter
+    #filterset_fields = ("category__slug", "genre__slug", "name", "year")
+
+class CreateListDeleteViewSet(
+    mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+):
+    pass
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-
-
-class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
-    serializer_class = TitleSerializer
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
 
 
 class CommentViewSet(viewsets.ModelViewSet):

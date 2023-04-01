@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from reviews.models import Category, Comment, Genre, Review, Title, User
@@ -57,20 +59,42 @@ class UserSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('name', 'slug')
-        lookup_field = 'slug'
+        fields = ("name", "slug")
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class TitleSerializer(serializers.ModelSerializer):    
+    genre = serializers.SlugRelatedField(
+        many=True, slug_field="slug", queryset=Genre.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        slug_field="slug", queryset=Category.objects.all()
+    )
+
     class Meta:
         model = Title
-        exclude = ('id',)
+        fields = (
+            "id",
+            "name",
+            "year",
+            "rating",
+            "description",
+            "genre",
+            "category",
+        )
+        read_only_fields = ("id", "rating")
+
+    def validate(self, data):
+        if data["year"] > datetime.date.today().year:
+            raise serializers.ValidationError(
+                "Нельзя добавлять произведения, которые еще не вышли"
+            )
+        return data
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = ("name", "slug")
 
 
 class CommentSerializer(serializers.ModelSerializer):
