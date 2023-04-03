@@ -16,7 +16,7 @@ v1_router.register(
 )
 v1_router.register(
     'genres',
-     GenreViewSet
+    GenreViewSet
 )
 v1_router.register(
     'titles',

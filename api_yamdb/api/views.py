@@ -111,6 +111,7 @@ class UserViewSet(viewsets.ModelViewSet):
         )
         return Response(serializer.data)
 
+
 class CategoryViewSet(CreateListDeleteViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -127,6 +128,7 @@ class GenreViewSet(CreateListDeleteViewSet):
     filter_backends = (SearchFilter,)
     search_fields = ("name",)
     lookup_field = 'slug'
+
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score'))

@@ -115,6 +115,7 @@ class Genre(models.Model):
     def __str__(self) -> str:
         return self.name
 
+
 class Title(models.Model):
     """Произв-я"""
     name = models.CharField(

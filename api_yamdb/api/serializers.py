@@ -46,7 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Пользователь с таким именем уже есть!')
         return value
-    
+
     class Meta:
         model = User
         fields = (
@@ -71,6 +71,7 @@ class CategorySerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Такой slug уже есть!')
         return value
+
     class Meta:
         model = Category
         fields = (
@@ -89,6 +90,7 @@ class GenreSerializer(serializers.ModelSerializer):
         )
         lookup_field = "slug"
 
+
 class TitleSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(many=True)
@@ -106,7 +108,8 @@ class TitleSerializer(serializers.ModelSerializer):
         )
         model = Title
 
-class TitleCreateSerializer(serializers.ModelSerializer):    
+
+class TitleCreateSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field="slug",
         queryset=Category.objects.all()
@@ -164,7 +167,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='name',
         read_only=True
     )
-    
+
     def validate_score(self, value):
         if 1 > value or value > 10:
             raise serializers.ValidationError(
