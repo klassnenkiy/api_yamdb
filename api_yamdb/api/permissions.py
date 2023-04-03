@@ -2,6 +2,7 @@ from rest_framework import permissions
 
 
 class IsAdmin(permissions.BasePermission):
+    """только админ"""
     def has_permission(self, request, view):
         return (
             request.user.is_authenticated
@@ -10,6 +11,7 @@ class IsAdmin(permissions.BasePermission):
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
+    """все только админ для остальных чтение"""
     def has_permission(self, request, view):
         return (
             request.method in permissions.SAFE_METHODS
@@ -19,6 +21,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 
 class IsAuthorModeratorAdminOrReadOnly(permissions.BasePermission):
+    """автор, модератоор и админ могут редактировать, остальные чтение"""
     def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS
                 or request.user.is_authenticated)

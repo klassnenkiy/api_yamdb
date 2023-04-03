@@ -136,8 +136,6 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        through="GenreTitle",
-        blank=True,
         related_name='titles',
         verbose_name="Жанр",
         help_text="Жанр произведения",
@@ -206,6 +204,11 @@ class Review(models.Model):
     class Meta:
         """Внутренний класс Meta."""
         default_related_name = 'reviews'
+        constraints = [
+            models.UniqueConstraint(
+                fields=('title', 'author',),
+                name='Автор может поставить только одну оценку')
+        ]
 
     def __str__(self):
         return self.text

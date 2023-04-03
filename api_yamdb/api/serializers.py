@@ -86,7 +86,7 @@ class GenreSerializer(serializers.ModelSerializer):
             "name",
             "slug"
         )
-        lookup_field = 'slug'
+        lookup_field = "slug"
 
 class TitleSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
@@ -106,14 +106,14 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
 
 class TitleCreateSerializer(serializers.ModelSerializer):    
+    category = serializers.SlugRelatedField(
+        slug_field="slug",
+        queryset=Category.objects.all()
+    )
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field="slug",
         queryset=Genre.objects.all()
-    )
-    category = serializers.SlugRelatedField(
-        slug_field="slug",
-        queryset=Category.objects.all()
     )
 
     class Meta:
@@ -187,4 +187,3 @@ class ReviewSerializer(serializers.ModelSerializer):
         """Внутренний класс Meta."""
         fields = '__all__'
         model = Review
-        read_only_fields = ('title',)
