@@ -10,7 +10,7 @@ from .validators import validate_username, validate_year
 
 
 class User(AbstractUser):
-
+    """Модель юзера"""
     USER = 'user'
     ADMIN = 'admin'
     MODERATOR = 'moderator'
@@ -77,6 +77,7 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
+    """Категории"""
     name = models.CharField(
         max_length=MAX_LENGTH_NAME_CATEGORY,
         verbose_name="Категория",
@@ -96,6 +97,7 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
+    """Жанры"""
     name = models.CharField(
         max_length=MAX_LENGTH_NAME_GENRE,
         verbose_name="Жанр",
@@ -115,6 +117,7 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
+    """Произв-я"""
     name = models.CharField(
         max_length=MAX_LENGTH_NAME_TITLE,
         verbose_name="Название произведения",
@@ -187,7 +190,7 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Автор',
     )
-    score = models.IntegerField(
+    score = models.PositiveIntegerField(
         validators=[
             MinValueValidator(settings.SCORE_ZERO),
             MaxValueValidator(settings.SCORE_TEN),

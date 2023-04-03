@@ -6,6 +6,7 @@ from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 class SignupSerializer(serializers.Serializer):
+    """Регистрация юзера"""
     username = serializers.RegexField(
         regex=r'^[\w.@+-]',
         required=True,
@@ -18,6 +19,7 @@ class SignupSerializer(serializers.Serializer):
         fields = ('username', 'email',)
 
     def validate_username(self, value):
+        """username не me"""
         if value.lower() == 'me':
             raise serializers.ValidationError(
                 'Username me запрещен'
@@ -26,11 +28,13 @@ class SignupSerializer(serializers.Serializer):
 
 
 class TokenSerializer(serializers.Serializer):
+    """Получение токена"""
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Модель пользователя"""
     username = serializers.RegexField(
         regex=r'^[\w.@+-]',
         required=True,
@@ -82,6 +86,7 @@ class GenreSerializer(serializers.ModelSerializer):
             "name",
             "slug"
         )
+        lookup_field = 'slug'
 
 class TitleSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
@@ -110,7 +115,6 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         slug_field="slug",
         queryset=Category.objects.all()
     )
-    rating = serializers.IntegerField()
 
     class Meta:
         model = Title
