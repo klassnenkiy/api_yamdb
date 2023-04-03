@@ -43,7 +43,6 @@ class UserSerializer(serializers.ModelSerializer):
                 'Пользователь с таким именем уже есть!')
         return value
 
-
     class Meta:
         model = User
         fields = (
@@ -62,7 +61,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ("name", "slug")
 
 
-class TitleSerializer(serializers.ModelSerializer):    
+class TitleSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         many=True, slug_field="slug", queryset=Genre.objects.all()
     )

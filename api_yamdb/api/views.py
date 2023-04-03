@@ -22,10 +22,14 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, SignupSerializer,
                           TitleSerializer, TokenSerializer, UserSerializer)
 
+# Написала по одному миксину на строку,
+# при отправки на проверку не проходил flake8
 
-class CreateListDeleteViewSet(
-    mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
-):
+
+class CreateListDeleteViewSet(mixins.CreateModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.DestroyModelMixin,
+                              viewsets.GenericViewSet):
     pass
 
 
@@ -98,13 +102,14 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save(role=instance.role, partial=True)
         return Response(serializer.data)
 
+
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.select_related("category")
     serializer_class = TitleSerializer
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     filter_class = TitleFilter
-    #filterset_fields = ("category__slug", "genre__slug", "name", "year")
+    # filterset_fields = ("category__slug", "genre__slug", "name", "year")
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -126,7 +131,11 @@ class GenreViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     """Представление класса comment"""
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+        IsAdminOrReadOnly,
+        IsAuthorModeratorAdminOrReadOnly,
+    )
 
     def get_queryset(self):
         """Набор объектов из базы данных."""
@@ -142,7 +151,11 @@ class CommentViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     """Представление класса review"""
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+        IsAdminOrReadOnly,
+        IsAuthorModeratorAdminOrReadOnly,
+    )
 
     def get_queryset(self):
         """Набор объектов из базы данных."""
