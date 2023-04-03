@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
@@ -56,6 +56,7 @@ def signup(request):
 
 @api_view(('POST',))
 def get_token(request):
+    """Получение токена"""
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = get_object_or_404(
@@ -104,13 +105,34 @@ class UserViewSet(viewsets.ModelViewSet):
             partial=True
         )
         serializer.is_valid(raise_exception=True)
-        serializer.save(role=instance.role, partial=True)
+        serializer.save(
+            role=instance.role,
+            partial=True
+        )
         return Response(serializer.data)
+
+class CategoryViewSet(CreateListDeleteViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (SearchFilter,)
+    search_fields = ("name",)
+    lookup_field = 'slug'
+
+
+class GenreViewSet(CreateListDeleteViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (SearchFilter,)
+    search_fields = ("name",)
+    lookup_field = 'slug'
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
     pagination_class = LimitOffsetPagination
     filterset_class = TitleFilter
 
@@ -118,25 +140,6 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return TitleSerializer
         return TitleCreateSerializer
-
-
-
-class CategoryViewSet(CreateListDeleteViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    lookup_field = 'slug'
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ("name",)
-
-
-class GenreViewSet(CreateListDeleteViewSet):
-    queryset = Genre.objects.all()
-    serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    lookup_field = 'slug'
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ("name",)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -151,7 +154,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         review_id = self.kwargs.get('review_id')
         review = get_object_or_404(
             Review,
-            id=review_id,title=title_id)
+            id=review_id,
+            title=title_id
+        )
         return review.comments.all()
 
     def perform_create(self, serializer):

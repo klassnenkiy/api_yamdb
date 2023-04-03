@@ -46,8 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Пользователь с таким именем уже есть!')
         return value
-
-
+    
     class Meta:
         model = User
         fields = (
@@ -56,13 +55,15 @@ class UserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'bio',
-            'role'
+            'role',
         )
 
 
 class CategorySerializer(serializers.ModelSerializer):
     slug = serializers.SlugField(
         max_length=50,
+        min_length=None,
+        allow_blank=False
     )
 
     def validate_slug(self, value):
@@ -74,7 +75,7 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = (
             "name",
-            "slug"
+            "slug",
         )
         lookup_field = 'slug'
 
@@ -84,7 +85,7 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
         fields = (
             "name",
-            "slug"
+            "slug",
         )
         lookup_field = "slug"
 
@@ -101,7 +102,7 @@ class TitleSerializer(serializers.ModelSerializer):
             'rating',
             'description',
             'genre',
-            'category'
+            'category',
         )
         model = Title
 
@@ -111,9 +112,9 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all()
     )
     genre = serializers.SlugRelatedField(
-        many=True,
         slug_field="slug",
-        queryset=Genre.objects.all()
+        queryset=Genre.objects.all(),
+        many=True,
     )
 
     class Meta:
@@ -151,7 +152,6 @@ class CommentSerializer(serializers.ModelSerializer):
         """Внутренний класс Meta."""
         fields = '__all__'
         model = Comment
-        read_only_fields = ('title',)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -164,7 +164,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='name',
         read_only=True
     )
-
+    
+    def validate_score(self, value):
+        if 1 > value or value > 10:
+            raise serializers.ValidationError(
+                'Оценка должна быть не менее 1 и не более 10'
+            )
+        return value
 
     def validate(self, data):
         request = self.context['request']

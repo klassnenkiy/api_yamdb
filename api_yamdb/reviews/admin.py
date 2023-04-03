@@ -16,7 +16,7 @@ class CategoryResource(resources.ModelResource):
 
 @admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
-    resource_classes = (CategoryResource,)
+    resource_classes = [CategoryResource]
     list_display = (
         'name',
         'slug',
@@ -35,7 +35,7 @@ class GenreResource(resources.ModelResource):
 
 @admin.register(Genre)
 class GenreAdmin(ImportExportModelAdmin):
-    resource_classes = (GenreResource,)
+    resource_classes = [GenreResource]
     list_display = (
         'name',
         'slug',
@@ -55,7 +55,7 @@ class TitleResource(resources.ModelResource):
 
 @admin.register(Title)
 class TitleAdmin(ImportExportModelAdmin):
-    resource_classes = (TitleResource,)
+    resource_classes = [TitleResource]
     list_display = (
         'name',
         'year',
@@ -75,7 +75,7 @@ class GenreTitleResource(resources.ModelResource):
 
 @admin.register(GenreTitle)
 class GenreTitleAdmin(ImportExportModelAdmin):
-    resource_classes = (GenreTitleResource,)
+    resource_classes = [GenreTitleResource]
     list_display = (
         'title_id',
         'genre_id',
@@ -97,7 +97,7 @@ class ReviewsResource(resources.ModelResource):
 
 @admin.register(Review)
 class ReviewsAdmin(ImportExportModelAdmin):
-    resource_classes = (ReviewsResource,)
+    resource_classes = [ReviewsResource]
     list_display = (
         'text',
         'author',
@@ -120,7 +120,7 @@ class CommentsResource(resources.ModelResource):
 
 @admin.register(Comment)
 class CommentsAdmin(ImportExportModelAdmin):
-    resource_classes = (CommentsResource,)
+    resource_classes = [CommentsResource]
     list_display = (
         'text',
         'author',

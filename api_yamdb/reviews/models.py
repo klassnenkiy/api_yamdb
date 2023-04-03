@@ -92,8 +92,8 @@ class Category(models.Model):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
-    def __str__(self):
-        return self.slug
+    def __str__(self) -> str:
+        return self.name
 
 
 class Genre(models.Model):
@@ -112,9 +112,8 @@ class Genre(models.Model):
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
 
-    def __str__(self):
-        return self.slug
-
+    def __str__(self) -> str:
+        return self.name
 
 class Title(models.Model):
     """Произв-я"""
@@ -168,7 +167,7 @@ class GenreTitle(models.Model):
         on_delete=models.CASCADE
     )
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'{self.title_id} - {self.genre_id}'
 
 
