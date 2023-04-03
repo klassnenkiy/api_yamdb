@@ -75,7 +75,32 @@ class CategorySerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
-class TitleSerializer(serializers.ModelSerializer):    
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = (
+            "name",
+            "slug"
+        )
+
+class TitleSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(many=True)
+    rating = serializers.IntegerField()
+
+    class Meta:
+        fields = (
+            'id',
+            'name',
+            'year',
+            'rating',
+            'description',
+            'genre',
+            'category'
+        )
+        model = Title
+
+class TitleCreateSerializer(serializers.ModelSerializer):    
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field="slug",
@@ -93,14 +118,9 @@ class TitleSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "year",
-            "rating",
             "description",
             "genre",
             "category",
-        )
-        read_only_fields = (
-            "id",
-            "rating"
         )
         model = Title
 
