@@ -68,17 +68,24 @@ class CategorySerializer(serializers.ModelSerializer):
         return value
     class Meta:
         model = Category
-        fields = ("name", "slug")
+        fields = (
+            "name",
+            "slug"
+        )
         lookup_field = 'slug'
 
 
 class TitleSerializer(serializers.ModelSerializer):    
     genre = serializers.SlugRelatedField(
-        many=True, slug_field="slug", queryset=Genre.objects.all()
+        many=True,
+        slug_field="slug",
+        queryset=Genre.objects.all()
     )
     category = serializers.SlugRelatedField(
-        slug_field="slug", queryset=Category.objects.all()
+        slug_field="slug",
+        queryset=Category.objects.all()
     )
+    rating = serializers.IntegerField()
 
     class Meta:
         model = Title
@@ -91,10 +98,14 @@ class TitleSerializer(serializers.ModelSerializer):
             "genre",
             "category",
         )
-        read_only_fields = ("id", "rating")
+        read_only_fields = (
+            "id",
+            "rating"
+        )
+        model = Title
 
     def validate(self, data):
-        if data["year"] > datetime.date.today().year:
+        if data["year"] <= 0 or data["year"] > datetime.date.today().year:
             raise serializers.ValidationError(
                 "Нельзя добавлять произведения, которые еще не вышли"
             )
@@ -104,7 +115,10 @@ class TitleSerializer(serializers.ModelSerializer):
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = ("name", "slug")
+        fields = (
+            "name",
+            "slug"
+        )
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -112,6 +126,10 @@ class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username'
+    )
+    review = serializers.SlugRelatedField(
+        slug_field='text',
+        read_only=True
     )
 
     class Meta:

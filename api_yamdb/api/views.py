@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import IntegrityError
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
@@ -112,7 +113,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     filter_class = TitleFilter
-    #filterset_fields = ("category__slug", "genre__slug", "name", "year")
+    # filterset_fields = ("category__slug", "genre__slug", "name", "year")
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -136,30 +137,56 @@ class GenreViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     """Представление класса comment"""
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+        IsAdminOrReadOnly,
+        IsAuthorModeratorAdminOrReadOnly,
+    )
 
     def get_queryset(self):
         """Набор объектов из базы данных."""
-        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        title = get_object_or_404(
+            Title,
+            pk=self.kwargs.get('title_id')
+        )
         return title.comments
 
     def perform_create(self, serializer):
         """Сохранение нового комментария."""
-        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
-        serializer.save(author=self.request.user, title=title)
+        title = get_object_or_404(
+            Title,
+            pk=self.kwargs.get('title_id')
+        )
+        serializer.save(
+            author=self.request.user,
+            title=title
+        )
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     """Представление класса review"""
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+        IsAdminOrReadOnly,
+        IsAuthorModeratorAdminOrReadOnly,
+    )
 
     def get_queryset(self):
         """Набор объектов из базы данных."""
-        title = get_object_or_404(Title, pk=self.kwargs.get('review_id'))
+        title = get_object_or_404(
+            Title,
+            pk=self.kwargs.get('review_id')
+        )
         return title.reviews
 
     def perform_create(self, serializer):
         """Сохранение нового отзыва."""
-        title = get_object_or_404(Title, pk=self.kwargs.get('review_id'))
-        serializer.save(author=self.request.user, title=title)
+        title = get_object_or_404(
+            Title,
+            pk=self.kwargs.get('review_id')
+        )
+        serializer.save(
+            author=self.request.user,
+            title=title
+        )
