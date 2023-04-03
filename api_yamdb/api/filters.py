@@ -5,13 +5,11 @@ from reviews.models import Category, Genre, Title
 class TitleFilter(django_filters.FilterSet):
     category = django_filters.ModelChoiceFilter(
         field_name='category__slug',
-        to_field_name='category',
-        queryset=Category.objects.all()
+        lookup_expr='icontains'
     )
     genre = django_filters.ModelChoiceFilter(
-        field_name='genre__slug',
-        to_field_name='genre',
-        queryset=Genre.objects.all()
+        field_name='genre',
+        lookup_expr='icontains'
     )
     name = django_filters.ModelChoiceFilter(
         field_name='name',

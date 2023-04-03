@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -116,6 +116,7 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all()
     )
 
+
     class Meta:
         model = Title
         fields = (
@@ -128,12 +129,12 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         )
         model = Title
 
-    def validate(self, data):
-        if data["year"] <= 0 or data["year"] > datetime.date.today().year:
-            raise serializers.ValidationError(
-                "Нельзя добавлять произведения, которые еще не вышли"
-            )
-        return data
+        def validate(self, data):
+            if data["year"] > dt.date.today().year:
+                raise serializers.ValidationError(
+                    "Нельзя добавлять произведения, которые еще не вышли"
+                )
+            return data
 
 
 class GenreSerializer(serializers.ModelSerializer):
