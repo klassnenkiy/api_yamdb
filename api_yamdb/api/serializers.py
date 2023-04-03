@@ -57,9 +57,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    slug = serializers.SlugField(
+        max_length=50,
+    )
+
+    def validate_slug(self, value):
+        if Category.objects.filter(slug=value).exists():
+            raise serializers.ValidationError(
+                'Такой slug уже есть!')
+        return value
     class Meta:
         model = Category
         fields = ("name", "slug")
+        lookup_field = 'slug'
 
 
 class TitleSerializer(serializers.ModelSerializer):    
