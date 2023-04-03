@@ -10,7 +10,7 @@ from .validators import validate_username, validate_year
 
 
 class User(AbstractUser):
-
+    """Модель юзера"""
     USER = 'user'
     ADMIN = 'admin'
     MODERATOR = 'moderator'
@@ -77,6 +77,7 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
+    """Категории"""
     name = models.CharField(
         max_length=MAX_LENGTH_NAME_CATEGORY,
         verbose_name="Категория",
@@ -91,11 +92,12 @@ class Category(models.Model):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
-    def __str__(self):
-        return self.slug
+    def __str__(self) -> str:
+        return self.name
 
 
 class Genre(models.Model):
+    """Жанры"""
     name = models.CharField(
         max_length=MAX_LENGTH_NAME_GENRE,
         verbose_name="Жанр",
@@ -110,11 +112,12 @@ class Genre(models.Model):
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
 
-    def __str__(self):
-        return self.slug
+    def __str__(self) -> str:
+        return self.name
 
 
 class Title(models.Model):
+    """Произв-я"""
     name = models.CharField(
         max_length=MAX_LENGTH_NAME_TITLE,
         verbose_name="Название произведения",
@@ -126,7 +129,6 @@ class Title(models.Model):
         verbose_name="Год выпуска",
         validators=(validate_year,)
     )
-    # rating = 1  # дописать ForeignKey после создания модели Рейтинга
     description = models.TextField(
         verbose_name="Описание произведения",
         blank=True,
@@ -134,8 +136,6 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        through="GenreTitle",
-        blank=True,
         related_name='titles',
         verbose_name="Жанр",
         help_text="Жанр произведения",
@@ -168,7 +168,7 @@ class GenreTitle(models.Model):
         on_delete=models.CASCADE
     )
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'{self.title_id} - {self.genre_id}'
 
 
@@ -188,7 +188,7 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Автор',
     )
-    score = models.IntegerField(
+    score = models.PositiveIntegerField(
         validators=[
             MinValueValidator(settings.SCORE_ZERO),
             MaxValueValidator(settings.SCORE_TEN),
@@ -204,6 +204,11 @@ class Review(models.Model):
     class Meta:
         """Внутренний класс Meta."""
         default_related_name = 'reviews'
+        constraints = [
+            models.UniqueConstraint(
+                fields=('title', 'author',),
+                name='Автор может поставить только одну оценку')
+        ]
 
     def __str__(self):
         return self.text
