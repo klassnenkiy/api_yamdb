@@ -6,7 +6,7 @@ from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 class SignupSerializer(serializers.Serializer):
-    """Регистрация юзера"""
+    '''Регистрация юзера'''
     username = serializers.RegexField(
         regex=r'^[\w.@+-]',
         required=True,
@@ -19,7 +19,7 @@ class SignupSerializer(serializers.Serializer):
         fields = ('username', 'email',)
 
     def validate_username(self, value):
-        """username не me"""
+        '''username не me'''
         if value.lower() == 'me':
             raise serializers.ValidationError(
                 'Username me запрещен'
@@ -28,13 +28,13 @@ class SignupSerializer(serializers.Serializer):
 
 
 class TokenSerializer(serializers.Serializer):
-    """Получение токена"""
+    '''Получение токена'''
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Модель пользователя"""
+    '''Модель пользователя'''
     username = serializers.RegexField(
         regex=r'^[\w.@+-]',
         required=True,
@@ -75,8 +75,8 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = (
-            "name",
-            "slug",
+            'name',
+            'slug',
         )
         lookup_field = 'slug'
 
@@ -85,10 +85,10 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = (
-            "name",
-            "slug",
+            'name',
+            'slug',
         )
-        lookup_field = "slug"
+        lookup_field = 'slug'
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -97,51 +97,36 @@ class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField()
 
     class Meta:
-        fields = (
-            'id',
-            'name',
-            'year',
-            'rating',
-            'description',
-            'genre',
-            'category',
-        )
+        fields = '__all__'
         model = Title
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
-        slug_field="slug",
+        slug_field='slug',
         queryset=Category.objects.all()
     )
     genre = serializers.SlugRelatedField(
-        slug_field="slug",
+        slug_field='slug',
         queryset=Genre.objects.all(),
         many=True,
     )
 
     class Meta:
         model = Title
-        fields = (
-            "id",
-            "name",
-            "year",
-            "description",
-            "genre",
-            "category",
-        )
+        fields = '__all__'
         model = Title
 
         def validate(self, data):
-            if data["year"] > dt.date.today().year:
+            if data['year'] > dt.date.today().year:
                 raise serializers.ValidationError(
-                    "Нельзя добавлять произведения, которые еще не вышли"
+                    'Нельзя добавлять произведения, которые еще не вышли'
                 )
             return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    """Класс сериализатора Comment."""
+    '''Класс сериализатора Comment.'''
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username'
@@ -152,13 +137,13 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        """Внутренний класс Meta."""
+        '''Внутренний класс Meta.'''
         fields = '__all__'
         model = Comment
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    """Класс сериализатора Review."""
+    '''Класс сериализатора Review.'''
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username'
@@ -193,6 +178,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         return data
 
     class Meta:
-        """Внутренний класс Meta."""
+        '''Внутренний класс Meta.'''
         fields = '__all__'
         model = Review

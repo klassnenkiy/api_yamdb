@@ -56,7 +56,7 @@ def signup(request):
 
 @api_view(('POST',))
 def get_token(request):
-    """Получение токена"""
+    '''Получение токена'''
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = get_object_or_404(
@@ -117,7 +117,7 @@ class CategoryViewSet(CreateListDeleteViewSet):
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (SearchFilter,)
-    search_fields = ("name",)
+    search_fields = ('name',)
     lookup_field = 'slug'
 
 
@@ -126,7 +126,7 @@ class GenreViewSet(CreateListDeleteViewSet):
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (SearchFilter,)
-    search_fields = ("name",)
+    search_fields = ('name',)
     lookup_field = 'slug'
 
 
@@ -145,13 +145,13 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    """Представление класса comment"""
+    '''Представление класса comment'''
     serializer_class = CommentSerializer
     permission_classes = (IsAuthorModeratorAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
-        """Набор объектов из базы данных."""
+        '''Набор объектов из базы данных.'''
         title_id = self.kwargs.get('title_id')
         review_id = self.kwargs.get('review_id')
         review = get_object_or_404(
@@ -162,7 +162,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         return review.comments.all()
 
     def perform_create(self, serializer):
-        """Сохранение нового комментария."""
+        '''Сохранение нового комментария.'''
         title_id = self.kwargs.get('title_id')
         review_id = self.kwargs.get('review_id')
         review = get_object_or_404(
@@ -177,13 +177,13 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    """Представление класса review"""
+    '''Представление класса review'''
     serializer_class = ReviewSerializer
     permission_classes = (IsAuthorModeratorAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
-        """Набор объектов из базы данных."""
+        '''Набор объектов из базы данных.'''
         title = get_object_or_404(
             Title,
             pk=self.kwargs.get('title_id')
@@ -191,7 +191,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return title.reviews.all()
 
     def perform_create(self, serializer):
-        """Сохранение нового отзыва."""
+        '''Сохранение нового отзыва.'''
         title = get_object_or_404(
             Title,
             pk=self.kwargs.get('title_id')

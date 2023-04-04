@@ -10,7 +10,7 @@ from .validators import validate_username, validate_year
 
 
 class User(AbstractUser):
-    """Модель юзера"""
+    '''Модель юзера'''
     USER = 'user'
     ADMIN = 'admin'
     MODERATOR = 'moderator'
@@ -77,82 +77,82 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    """Категории"""
+    '''Категории'''
     name = models.CharField(
         max_length=MAX_LENGTH_NAME_CATEGORY,
-        verbose_name="Категория",
+        verbose_name='Категория',
     )
     slug = models.SlugField(
         unique=True,
         max_length=MAX_LENGTH_SLUG_CATEGORY,
-        verbose_name="Slug категории",
+        verbose_name='Slug категории',
     )
 
     class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
         return self.name
 
 
 class Genre(models.Model):
-    """Жанры"""
+    '''Жанры'''
     name = models.CharField(
         max_length=MAX_LENGTH_NAME_GENRE,
-        verbose_name="Жанр",
+        verbose_name='Жанр',
     )
     slug = models.SlugField(
         unique=True,
         max_length=MAX_LENGTH_SLUG_GENRE,
-        verbose_name="Slug жанра",
+        verbose_name='Slug жанра',
     )
 
     class Meta:
-        verbose_name = "Жанр"
-        verbose_name_plural = "Жанры"
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
 
     def __str__(self) -> str:
         return self.name
 
 
 class Title(models.Model):
-    """Произв-я"""
+    '''Произв-я'''
     name = models.CharField(
         max_length=MAX_LENGTH_NAME_TITLE,
-        verbose_name="Название произведения",
+        verbose_name='Название произведения',
         db_index=True
     )
     year = models.PositiveSmallIntegerField(
         blank=True,
         null=True,
-        verbose_name="Год выпуска",
+        verbose_name='Год выпуска',
         validators=(validate_year,)
     )
     description = models.TextField(
-        verbose_name="Описание произведения",
+        verbose_name='Описание произведения',
         blank=True,
         null=True,
     )
     genre = models.ManyToManyField(
         Genre,
         related_name='titles',
-        verbose_name="Жанр",
-        help_text="Жанр произведения",
+        verbose_name='Жанр',
+        help_text='Жанр произведения',
     )
     category = models.ForeignKey(
         Category,
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        related_name="titles",
-        verbose_name="Категория",
-        help_text="Категория произведения",
+        related_name='titles',
+        verbose_name='Категория',
+        help_text='Категория произведения',
     )
 
     class Meta:
-        verbose_name = "Произведение"
-        verbose_name_plural = "Произведения"
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
 
     def __str__(self):
         return self.name
@@ -173,7 +173,7 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
-    """Модель, отвечает за отзывы в произведениях."""
+    '''Модель, отвечает за отзывы в произведениях.'''
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -202,7 +202,7 @@ class Review(models.Model):
     )
 
     class Meta:
-        """Внутренний класс Meta."""
+        '''Внутренний класс Meta.'''
         default_related_name = 'reviews'
         constraints = [
             models.UniqueConstraint(
@@ -215,7 +215,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    """Модель, отвечает за комментарии к отзывам."""
+    '''Модель, отвечает за комментарии к отзывам.'''
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
@@ -239,7 +239,7 @@ class Comment(models.Model):
     )
 
     class Meta:
-        """Внутренний класс Meta."""
+        '''Внутренний класс Meta.'''
         default_related_name = 'comments'
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
