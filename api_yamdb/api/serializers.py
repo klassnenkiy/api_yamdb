@@ -115,7 +115,6 @@ class TitleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = '__all__'
-        model = Title
 
         def validate(self, data):
             if data['year'] > dt.date.today().year:
