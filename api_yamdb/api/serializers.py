@@ -78,7 +78,6 @@ class CategorySerializer(serializers.ModelSerializer):
             'name',
             'slug',
         )
-        lookup_field = 'slug'
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -88,7 +87,6 @@ class GenreSerializer(serializers.ModelSerializer):
             'name',
             'slug',
         )
-        lookup_field = 'slug'
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -97,8 +95,8 @@ class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField()
 
     class Meta:
-        fields = '__all__'
         model = Title
+        fields = '__all__'
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):

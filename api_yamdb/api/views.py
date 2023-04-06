@@ -9,7 +9,6 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
@@ -135,7 +134,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
-    pagination_class = LimitOffsetPagination
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
@@ -148,7 +146,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     '''Представление класса comment'''
     serializer_class = CommentSerializer
     permission_classes = (IsAuthorModeratorAdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         '''Набор объектов из базы данных.'''
@@ -180,7 +177,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
     '''Представление класса review'''
     serializer_class = ReviewSerializer
     permission_classes = (IsAuthorModeratorAdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         '''Набор объектов из базы данных.'''
