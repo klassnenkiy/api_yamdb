@@ -17,6 +17,7 @@ class UserResource(resources.ModelResource):
             'is_active'
         )
 
+
 @admin.register(User)
 class UserAdmin(ImportExportModelAdmin):
     resource_class = UserResource

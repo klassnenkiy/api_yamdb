@@ -1,5 +1,3 @@
-import datetime as dt
-
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title, User
@@ -113,13 +111,6 @@ class TitleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = '__all__'
-
-        def validate(self, data):
-            if data['year'] > dt.date.today().year:
-                raise serializers.ValidationError(
-                    'Нельзя добавлять произведения, которые еще не вышли'
-                )
-            return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
